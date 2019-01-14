@@ -5,7 +5,7 @@ Tests of verify_student views.
 
 import json
 import urllib
-from datetime import datetime, timedelta
+from datetime import date, datetime, timedelta
 from uuid import uuid4
 
 import boto
@@ -1774,6 +1774,9 @@ class TestPhotoVerificationResultsCallback(ModuleStoreTestCase):
         """
         Test for verification passed.
         """
+        expiry_date = date.today() + timedelta(
+            days=settings.VERIFY_STUDENT["DAYS_GOOD_FOR"]
+        )
         data = {
             "EdX-ID": self.receipt_id,
             "Result": "PASS",
@@ -1789,6 +1792,7 @@ class TestPhotoVerificationResultsCallback(ModuleStoreTestCase):
         )
         attempt = SoftwareSecurePhotoVerification.objects.get(receipt_id=self.receipt_id)
         self.assertEqual(attempt.status, u'approved')
+        self.assertEqual(attempt.expiry_date.date(), expiry_date)
         self.assertEquals(response.content, 'OK!')
         self.assertEqual(len(mail.outbox), 1)
 
