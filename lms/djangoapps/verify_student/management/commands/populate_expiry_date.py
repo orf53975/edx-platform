@@ -2,6 +2,7 @@
 Django admin command to populate expiry_date for approved verifications in SoftwareSecurePhotoVerification
 """
 import logging
+import time
 from datetime import timedelta
 
 from django.conf import settings
@@ -17,12 +18,14 @@ class Command(BaseCommand):
     This command sets the expiry_date for users for which the verification is approved
 
     The task is performed in batches with maximum number of rows to process given in argument `batch_size`
+    and a sleep time between each batch given by `sleep_time`
 
     Default values:
         `batch_size` = 1000 rows
+        `sleep_time` = 10 seconds
 
     Example usage:
-        $ ./manage.py lms populate_expiry_date --batch_size=1000
+        $ ./manage.py lms populate_expiry_date --batch_size=1000 --sleep_time=5
     OR
         $ ./manage.py lms populate_expiry_date
     """
@@ -37,6 +40,13 @@ class Command(BaseCommand):
             default=1000,
             help='Maximum number of database rows to process. '
                  'This helps avoid locking the database while updating large amount of data.')
+        parser.add_argument(
+            '--sleep_time',
+            action='store',
+            dest='sleep_time',
+            type=int,
+            default=10,
+            help='Sleep time in seconds between update of batches')
 
     def __init__(self, *args, **kwargs):
         super(Command, self).__init__(*args, **kwargs)
@@ -48,9 +58,10 @@ class Command(BaseCommand):
 
         It creates batches of approved Software Secure Photo Verification depending on the batch_size
         given as argument. Then for each distinct user in that batch it finds the most recent approved
-        verification and sets it expiry_date
+        verification and set its expiry_date
         """
         batch_size = options['batch_size']
+        sleep_time = options['sleep_time']
 
         try:
             max_user_id = self.sspv[0].user_id
@@ -67,9 +78,11 @@ class Command(BaseCommand):
             for user in users:
                 recent_verification = self.find_recent_verification(user['user_id'])
                 recent_verification.expiry_date = recent_verification.updated_at + timedelta(
-                        days=settings.VERIFY_STUDENT["DAYS_GOOD_FOR"])
+                    days=settings.VERIFY_STUDENT["DAYS_GOOD_FOR"])
                 recent_verification.save()
-                logger.warning(recent_verification.updated_at)
+
+            if batch_stop < max_user_id:
+                time.sleep(sleep_time)
 
             batch_start = batch_stop
             batch_stop += batch_size
