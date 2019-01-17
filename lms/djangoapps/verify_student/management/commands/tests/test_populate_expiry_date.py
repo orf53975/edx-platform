@@ -42,6 +42,27 @@ class TestPopulateExpiryDate(MockS3Mixin, TestCase):
         attempt.submit()
         return attempt
 
+    def test_expiry_date_already_present(self):
+        """
+        Test that the expiry_date for most recent approved verification is updated only when the
+        expiry_date is not already present
+        """
+        user = UserFactory.create()
+        verification = self.create_and_submit(user)
+        verification.status = 'approved'
+        verification.expiry_date = verification.updated_at + timedelta(days=10)
+        expiry_date = verification.expiry_date
+        verification.save()
+
+        call_command('populate_expiry_date')
+
+        # Check that the expiry_date for approved verification is not changed when it is already present
+        verification_expiry_date = SoftwareSecurePhotoVerification.objects.get(
+            user_id=verification.user_id
+        ).expiry_date
+
+        self.assertEqual(verification_expiry_date, expiry_date)
+
     def test_recent_approved_verification(self):
         """
         Test that the expiry_date for most recent approved verification is updated
@@ -72,7 +93,7 @@ class TestPopulateExpiryDate(MockS3Mixin, TestCase):
         """
         Tests that the command correctly updates expiry_date
         Criteria :
-                 Verification for which status is approved
+                 Verification for which status is approved and expiry_date is null
         """
         # Create verification with status : submitted
         user = UserFactory.create()

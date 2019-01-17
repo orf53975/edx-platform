@@ -50,7 +50,9 @@ class Command(BaseCommand):
 
     def __init__(self, *args, **kwargs):
         super(Command, self).__init__(*args, **kwargs)
-        self.sspv = SoftwareSecurePhotoVerification.objects.filter(status='approved').order_by('-user_id')
+        self.sspv = SoftwareSecurePhotoVerification.objects.filter(status='approved',
+                                                                   expiry_date__isnull=True
+                                                                   ).order_by('-user_id')
 
     def handle(self, *args, **options):
         """
