@@ -22,14 +22,10 @@ APP = Celery('proj')
 # pickle the object when using Windows.
 APP.config_from_object('django.conf:settings')
 APP.autodiscover_tasks(lambda: settings.INSTALLED_APPS)
-
-
-class Config:
-    enable_utc = True
-    timezone = 'Europe/London'
-
-
-APP.config_from_object(Config)
+APP.conf.update(
+     enable_utc=True,
+     timezone='Europe/London',
+)
 
 
 class Router(AlternateEnvironmentRouter):
