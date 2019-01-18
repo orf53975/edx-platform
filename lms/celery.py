@@ -24,6 +24,14 @@ APP.config_from_object('django.conf:settings')
 APP.autodiscover_tasks(lambda: settings.INSTALLED_APPS)
 
 
+class Config:
+    enable_utc = True
+    timezone = 'Europe/London'
+
+
+APP.config_from_object(Config)
+
+
 class Router(AlternateEnvironmentRouter):
     """
     An implementation of AlternateEnvironmentRouter, for routing tasks to non-cms queues.
