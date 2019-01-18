@@ -962,7 +962,7 @@ MEDIA_ROOT = '/edx/var/edxapp/media/'
 MEDIA_URL = '/media/'
 
 # Locale/Internationalization
-TIME_ZONE = 'Europe/London'  # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
+TIME_ZONE = 'America/New_York'  # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
 LANGUAGE_CODE = 'en'  # http://www.i18nguy.com/unicode/language-identifiers.html
 # these languages display right to left
 LANGUAGES_BIDI = ("he", "ar", "fa", "ur", "fa-ir", "rtl")
@@ -1882,8 +1882,6 @@ CELERY_QUEUES = {
     HIGH_MEM_QUEUE: {},
 }
 
-CELERY_TIMEZONE = 'Europe/London'
-CELERY_ENABLE_UTC = True
 # let logging work as configured:
 CELERYD_HIJACK_ROOT_LOGGER = False
 
