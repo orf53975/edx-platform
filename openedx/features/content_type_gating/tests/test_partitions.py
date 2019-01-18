@@ -1,6 +1,7 @@
 from datetime import datetime
 from mock import Mock, patch
 from django.conf import settings
+from django.test import RequestFactory
 
 from courseware.masquerade import CourseMasquerade
 from course_modes.tests.factories import CourseModeFactory
@@ -60,7 +61,7 @@ class TestContentTypeGatingPartition(CacheIsolationTestCase):
             partition = create_content_gating_partition(mock_course)
             mock_log.warning.assert_called()
         self.assertIsNone(partition)
-    
+
     def test_access_denied_fragment_for_masquerading(self):
         """
         Test that a global staff sees gated content flag when viewing course as `Learner in Audit`
@@ -73,10 +74,10 @@ class TestContentTypeGatingPartition(CacheIsolationTestCase):
             role='student',
             user_partition_id=ENROLLMENT_TRACK_PARTITION_ID,
             group_id=settings.COURSE_ENROLLMENT_MODES['audit']['id'],
-            user_name = None
+            user_name=None
         )
         CourseModeFactory.create(course_id=mock_course.id, mode_slug='verified')
-        
+
         global_staff = GlobalStaffFactory.create()
         ContentTypeGatingConfig.objects.create(enabled=False, studio_override_enabled=True)
 
