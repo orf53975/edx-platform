@@ -1882,6 +1882,8 @@ CELERY_QUEUES = {
     HIGH_MEM_QUEUE: {},
 }
 
+CELERY_TIMEZONE = 'Europe/London'
+CELERY_ENABLE_UTC = True
 # let logging work as configured:
 CELERYD_HIJACK_ROOT_LOGGER = False
 
