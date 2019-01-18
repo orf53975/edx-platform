@@ -50,6 +50,9 @@ else
     PARALLEL="--processes=-1"
 fi
 
+echo "JOB_NAME is ${JOB_NAME}"
+echo "SUBSET_JOB is ${SUBSET_JOB}"
+
 case "${TEST_SUITE}" in
 
     "lms-unit")
