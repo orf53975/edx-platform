@@ -186,6 +186,6 @@ def view_tracking_log(request, args=''):
     # fix dtstamp
     fmt = '%a %d-%b-%y %H:%M:%S'  # "%Y-%m-%d %H:%M:%S %Z%z"
     for rinst in record_instances:
-        rinst.dtstr = rinst.time.replace(tzinfo=pytz.utc).astimezone(pytz.timezone('Europe/London')).strftime(fmt)
+        rinst.dtstr = rinst.time.replace(tzinfo=pytz.utc).astimezone(pytz.timezone('US/Eastern')).strftime(fmt)
 
     return render_to_response('tracking_log.html', {'records': record_instances})
