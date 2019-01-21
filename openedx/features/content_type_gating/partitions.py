@@ -101,7 +101,7 @@ class ContentTypeGatingPartition(UserPartition):
 
     def _is_audit_enrollment(self, user, block):
         """
-        Checks if user is enrolled in `Audit` track of course or any staff member is 
+        Checks if user is enrolled in `Audit` track of course or any staff member is
         viewing course as in `Audit` enrollment.
         """
         course_key = self._get_course_key_from_course_block(block)
