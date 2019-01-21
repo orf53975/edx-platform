@@ -101,9 +101,8 @@ class ContentTypeGatingPartition(UserPartition):
 
     def _is_audit_enrollment(self, user, block):
         """
-        Returns True if viewing course as:
-            1 - `Learner in Audit`
-            2 - `Specific student` and student has active audit enrollment
+        Checks if user is enrolled in `Audit` track of course or any staff member is 
+        viewing course as in `Audit` enrollment.
         """
         course_key = self._get_course_key_from_course_block(block)
 
@@ -113,7 +112,7 @@ class ContentTypeGatingPartition(UserPartition):
 
     def _is_masquerading_as_generic_student(self, user, course_key):
         """
-        Returns True if viewing course as `Learner in {enrollment/group etc.}`
+        Checks if user is masquerading as a generic student.
         """
         return (
             is_masquerading_as_student(user, course_key) and
@@ -122,7 +121,7 @@ class ContentTypeGatingPartition(UserPartition):
 
     def _is_masquerading_audit_enrollment(self, user, course_key):
         """
-        Returns True if viewing course as `Learner in Audit`
+        Checks if user is masquerading as learners in `Audit` enrollment track.
         """
         course_masquerade = get_course_masquerade(user, course_key)
         if course_masquerade.user_partition_id == ENROLLMENT_TRACK_PARTITION_ID:
@@ -132,7 +131,7 @@ class ContentTypeGatingPartition(UserPartition):
 
     def _has_active_enrollment_in_audit_mode(self, user, course_key):
         """
-        Returns True if user has active audit enrollment in course
+        Checks if user has an audit and active enrollment in the given course.
         """
         course_enrollment = apps.get_model('student.CourseEnrollment')
         mode_slug, is_active = course_enrollment.enrollment_mode_for_user(user, course_key)
